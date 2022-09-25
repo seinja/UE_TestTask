@@ -2,6 +2,7 @@
 
 #include "UETestTask/Public/Character/TestTaskCharacter.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
 ATestTaskCharacter::ATestTaskCharacter()
@@ -16,6 +17,9 @@ ATestTaskCharacter::ATestTaskCharacter()
 	Camera = CreateDefaultSubobject<UCameraComponent>("FollowCamera");
 	Camera->SetupAttachment(ArmComponent, USpringArmComponent::SocketName);
 	Camera->bUsePawnControlRotation = false;
+
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
 void ATestTaskCharacter::BeginPlay()
