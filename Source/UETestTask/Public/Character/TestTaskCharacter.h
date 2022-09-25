@@ -6,24 +6,26 @@
 #include "GameFramework/Character.h"
 #include "TestTaskCharacter.generated.h"
 
+class UCameraComponent;
+class USpringArmComponent;
+
 UCLASS()
 class UETESTTASK_API ATestTaskCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	ATestTaskCharacter();
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+protected:
+	virtual void BeginPlay() override;
+
+private:
+	UPROPERTY(VisibleAnywhere, Category="Camera")
+	USpringArmComponent* ArmComponent;
+
+	UPROPERTY(VisibleAnywhere, Category="Camera")
+	UCameraComponent* Camera;
 };
