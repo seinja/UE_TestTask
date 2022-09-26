@@ -3,10 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameFramework/Actor.h"
 #include "GameFramework/Character.h"
 #include "TestTaskCharacter.generated.h"
 
+class AWeapon;
 class UCameraComponent;
+class UWidgetComponent;
 class USpringArmComponent;
 
 UCLASS()
@@ -17,7 +20,8 @@ class UETESTTASK_API ATestTaskCharacter : public ACharacter
 public:
 	ATestTaskCharacter();
 	virtual void Tick(float DeltaTime) override;
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -33,4 +37,16 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category="Camera")
 	UCameraComponent* Camera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UWidgetComponent* OverheadWidget;
+
+	UPROPERTY(ReplicatedUsing = OnRep_OverlappingWeapon)
+	AWeapon* OverlappingWeapon;
+
+	UFUNCTION()
+	void OnRep_OverlappingWeapon(const AWeapon* LastWeapon) const;
+
+public:
+	void SetOverlappingWeapon(AWeapon* Weapon);
 };

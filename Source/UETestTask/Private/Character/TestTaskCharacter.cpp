@@ -2,12 +2,16 @@
 
 #include "UETestTask/Public/Character/TestTaskCharacter.h"
 #include "Camera/CameraComponent.h"
+#include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Net/UnrealNetwork.h"
+#include "Weapon/Weapon.h"
 
 ATestTaskCharacter::ATestTaskCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
 
 	ArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("ArmComponent"));
 	ArmComponent->SetupAttachment(GetMesh());
@@ -20,11 +24,26 @@ ATestTaskCharacter::ATestTaskCharacter()
 
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	OverheadWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Overhead Widget"));
+	OverheadWidget->SetupAttachment(RootComponent);
+}
+
+void ATestTaskCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME_CONDITION(ATestTaskCharacter, OverlappingWeapon, COND_OwnerOnly);
 }
 
 void ATestTaskCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void ATestTaskCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
 }
 
 void ATestTaskCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -69,8 +88,31 @@ void ATestTaskCharacter::LookUp(const float Value)
 	AddControllerPitchInput(Value);
 }
 
-void ATestTaskCharacter::Tick(float DeltaTime)
+void ATestTaskCharacter::SetOverlappingWeapon(AWeapon* Weapon)
 {
-	Super::Tick(DeltaTime);
+	if(OverlappingWeapon)
+	{
+		OverlappingWeapon->ShowPickupWidget(false);
+	}
+	
+	OverlappingWeapon = Weapon;
+	if(IsLocallyControlled())
+	{
+		if(OverlappingWeapon)
+		{
+			OverlappingWeapon->ShowPickupWidget(true);
+		}
+	}
+}
 
+void ATestTaskCharacter::OnRep_OverlappingWeapon(const AWeapon* LastWeapon) const
+{
+	if(OverlappingWeapon)
+	{
+		OverlappingWeapon->ShowPickupWidget(true);
+	}
+	if(LastWeapon)
+	{
+		LastWeapon->ShowPickupWidget(false);
+	}
 }
