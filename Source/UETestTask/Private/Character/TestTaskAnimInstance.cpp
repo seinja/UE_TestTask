@@ -26,6 +26,8 @@ void UTestTaskAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	Speed = Velocity.Size();
 
 	bIsInAir = Character->GetCharacterMovement()->IsFalling();
-
 	bIsAccelerating = Character->GetCharacterMovement()->GetCurrentAcceleration().Size() > 0 ? true : false;
+	bWeaponEquipped = Character->IsWeaponEquipped();
+	bIsCrouched = Character->bIsCrouched;
+	bAiming = Character->IsAiming();
 }
