@@ -15,15 +15,15 @@ ATestTaskCharacter::ATestTaskCharacter()
 
 	ArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("ArmComponent"));
 	ArmComponent->SetupAttachment(GetMesh());
-	ArmComponent->TargetArmLength = 600.f;
+	ArmComponent->TargetArmLength = 200.f;
 	ArmComponent->bUsePawnControlRotation = true;
 
 	Camera = CreateDefaultSubobject<UCameraComponent>("FollowCamera");
 	Camera->SetupAttachment(ArmComponent, USpringArmComponent::SocketName);
 	Camera->bUsePawnControlRotation = false;
 
-	bUseControllerRotationYaw = false;
-	GetCharacterMovement()->bOrientRotationToMovement = true;
+	bUseControllerRotationYaw = true;
+	GetCharacterMovement()->bOrientRotationToMovement = false;
 
 	OverheadWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Overhead Widget"));
 	OverheadWidget->SetupAttachment(RootComponent);
